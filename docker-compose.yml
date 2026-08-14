@@ -1,0 +1,10 @@
+services:
+  traffic-analyzer:
+    build: .
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - ./data:/data
+    command: ["--interface", "eth0", "--count", "100", "--timeout", "30"]
