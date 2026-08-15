@@ -1,10 +1,12 @@
+import logging
 import signal
 from typing import Optional
 
 from app.models import PacketRecord
 
+logger = logging.getLogger(__name__)
 
-IP_PROTOCOLS = {
+IP_PROTOCOLS: dict[int, str] = {
     1: "ICMP",
     6: "TCP",
     17: "UDP",
@@ -14,14 +16,15 @@ IP_PROTOCOLS = {
 _stop_capture = False
 
 
-def _signal_handler(sig, frame):
+def _signal_handler(sig: int, frame: object) -> None:
     """Handler para Ctrl+C - sinaliza parada da captura."""
     global _stop_capture
     _stop_capture = True
-    print("\n[*] Interrompido pelo usuario. Finalizando captura...")
+    logger.warning("Interrupcao recebida (SIGINT). Finalizando captura...")
 
 
 def packet_to_record(packet: object) -> Optional[PacketRecord]:
+    """Converte um pacote Scapy em PacketRecord, ou None se nao possuir camada IP."""
     try:
         from scapy.layers.inet import IP
     except ImportError as exc:
@@ -48,7 +51,7 @@ def capture_packets(interface: str, count: int, timeout: int) -> list[PacketReco
     Captura pacotes da interface de rede com suporte a interrupcao graceful.
 
     Se o usuario pressionar Ctrl+C durante a captura, os pacotes ja capturados
-    sao retornados normalmente (sem perda de dados).
+    sao retornados normalmente, preservando o trabalho realizado.
     """
     global _stop_capture
     _stop_capture = False
@@ -65,6 +68,7 @@ def capture_packets(interface: str, count: int, timeout: int) -> list[PacketReco
     signal.signal(signal.SIGINT, _signal_handler)
 
     try:
+        logger.debug("sniff() iniciado em %s (count=%d, timeout=%d)", interface, count, timeout)
         packets = sniff(
             iface=interface,
             count=count,
@@ -76,7 +80,9 @@ def capture_packets(interface: str, count: int, timeout: int) -> list[PacketReco
         # Restaurar handler original
         signal.signal(signal.SIGINT, original_sigint)
 
-    return [record for packet in packets if (record := packet_to_record(packet)) is not None]
+    records = [record for packet in packets if (record := packet_to_record(packet)) is not None]
+    logger.debug("Pacotes com camada IP extraidos: %d de %d capturados", len(records), len(packets))
+    return records
 
 
 def demo_packets() -> list[PacketRecord]:

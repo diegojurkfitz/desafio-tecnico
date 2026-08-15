@@ -182,9 +182,34 @@ Os testes cobrem:
 - **Insercao em batch** (lotes de 50) reduz I/O e melhora performance em capturas de alto volume.
 - **WAL mode** no SQLite melhora throughput de escritas.
 - **Graceful shutdown** com signal handler preserva os pacotes ja capturados em caso de interrupcao.
+- **Logging estruturado** com modulo `logging` em vez de prints, facilitando integracao com ferramentas de observabilidade.
+- **CI/CD** com GitHub Actions executando testes automaticamente a cada push.
 - O modo `--demo` foi incluido para permitir validacao sem depender de permissao de captura.
 - A aplicacao ignora pacotes sem camada IP, pois os campos exigidos dependem de IP de origem e destino.
 - A coleta possui `--count` e `--timeout` para evitar execucoes infinitas e permitir controle operacional.
+
+### Makefile
+
+Comandos padronizados para facilitar operacao:
+
+```bash
+make help      # Lista comandos disponiveis
+make build     # Build da imagem Docker
+make demo      # Executa modo demonstracao
+make run       # Executa captura real
+make test      # Roda testes unitarios localmente
+make lint      # Verifica tipagem com mypy
+make clean     # Remove cache e banco local
+```
+
+### CI/CD
+
+O projeto possui pipeline de integracao continua via GitHub Actions (`.github/workflows/ci.yml`) que executa automaticamente:
+- Instalacao de dependencias
+- Testes unitarios
+- Execucao do modo demo
+
+A cada push ou pull request na branch `main`.
 
 ### Limitacoes conhecidas e melhorias possiveis
 

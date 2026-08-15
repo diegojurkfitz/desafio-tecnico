@@ -4,3 +4,7 @@ __pycache__/
 .venv/
 data/
 *.db
+.github/
+tests/
+Makefile
+README.md

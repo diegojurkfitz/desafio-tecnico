@@ -1,9 +1,11 @@
+import logging
 import sqlite3
 from pathlib import Path
 from typing import Iterable
 
 from app.models import PacketRecord
 
+logger = logging.getLogger(__name__)
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS packets (
@@ -21,21 +23,25 @@ CREATE INDEX IF NOT EXISTS idx_packets_destination_ip ON packets(destination_ip)
 """
 
 # Tamanho do lote para insercao em batch (otimiza I/O em grandes volumes)
-BATCH_SIZE = 50
+BATCH_SIZE: int = 50
 
 
 class PacketRepository:
+    """Repositorio para persistencia de pacotes capturados em SQLite."""
+
     def __init__(self, db_path: str) -> None:
         self.db_path = Path(db_path)
         if self.db_path.parent:
             self.db_path.parent.mkdir(parents=True, exist_ok=True)
-        self.connection = sqlite3.connect(self.db_path)
+        self.connection: sqlite3.Connection = sqlite3.connect(self.db_path)
         self.connection.row_factory = sqlite3.Row
         # WAL mode melhora performance em escritas concorrentes
         self.connection.execute("PRAGMA journal_mode=WAL")
         self.initialize()
+        logger.debug("Repositorio inicializado: %s", self.db_path)
 
     def initialize(self) -> None:
+        """Cria schema se nao existir."""
         self.connection.executescript(SCHEMA)
         self.connection.commit()
 
@@ -72,9 +78,12 @@ class PacketRepository:
             self.connection.commit()
             total_saved += len(batch)
 
+        logger.debug("Batch insert concluido: %d pacotes em %d lotes",
+                     total_saved, (len(records) + BATCH_SIZE - 1) // BATCH_SIZE)
         return total_saved
 
     def close(self) -> None:
+        """Fecha conexao com o banco."""
         self.connection.close()
 
     def __enter__(self) -> "PacketRepository":

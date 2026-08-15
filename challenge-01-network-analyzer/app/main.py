@@ -1,9 +1,21 @@
 import argparse
+import logging
 import sys
 
 from app.capture import capture_packets, demo_packets
 from app.database import PacketRepository
 from app.stats import calculate_stats, format_stats
+
+logger = logging.getLogger(__name__)
+
+
+def configure_logging() -> None:
+    """Configura logging estruturado para a aplicacao."""
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+        datefmt="%Y-%m-%dT%H:%M:%S",
+    )
 
 
 def parse_args() -> argparse.Namespace:
@@ -44,22 +56,28 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    configure_logging()
     args = parse_args()
 
     if args.count <= 0:
-        print("Erro: --count deve ser maior que zero.", file=sys.stderr)
+        logger.error("--count deve ser maior que zero.")
         return 2
 
     if args.timeout <= 0:
-        print("Erro: --timeout deve ser maior que zero.", file=sys.stderr)
+        logger.error("--timeout deve ser maior que zero.")
         return 2
 
     try:
         if args.demo:
+            logger.info("Modo demonstracao ativado.")
             packets = demo_packets()
         else:
-            print(f"Capturando ate {args.count} pacotes na interface {args.interface} "
-                  f"(timeout: {args.timeout}s)...")
+            logger.info(
+                "Iniciando captura: interface=%s, count=%d, timeout=%ds",
+                args.interface,
+                args.count,
+                args.timeout,
+            )
             print("Pressione Ctrl+C para interromper a captura a qualquer momento.\n")
             packets = capture_packets(
                 interface=args.interface,
@@ -67,9 +85,13 @@ def main() -> int:
                 timeout=args.timeout,
             )
 
+        logger.info("Captura finalizada. Pacotes obtidos: %d", len(packets))
+
         # Armazenar no banco (insercao em batch)
         with PacketRepository(args.db) as repository:
             saved = repository.save_many(packets)
+
+        logger.info("Pacotes armazenados no banco: %d", saved)
 
         # Exibir estatisticas
         print(format_stats(calculate_stats(packets)))
@@ -78,14 +100,12 @@ def main() -> int:
         print(f"Banco utilizado: {args.db}")
         return 0
     except PermissionError:
-        print(
-            "Erro de permissao ao capturar pacotes. Execute o container com NET_RAW/NET_ADMIN "
-            "ou use --demo para validar a aplicacao.",
-            file=sys.stderr,
+        logger.error(
+            "Permissao negada. Execute com NET_RAW/NET_ADMIN ou use --demo."
         )
         return 1
     except Exception as exc:
-        print(f"Erro durante a execucao: {exc}", file=sys.stderr)
+        logger.exception("Erro durante a execucao: %s", exc)
         return 1
 
 
