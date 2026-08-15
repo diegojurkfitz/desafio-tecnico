@@ -8,7 +8,7 @@ Resolucao dos challenges tecnicos focados em **Desenvolvimento** e **Inteligenci
 
 Aplicacao Python que captura pacotes de rede, armazena em banco SQLite e exibe estatisticas de trafego. Execucao via Docker.
 
-📂 [`challenge-01-network-analyzer/`](./challenge-01-network-analyzer/)
+[`challenge-01-network-analyzer/`](./challenge-01-network-analyzer/)
 
 **Principais tecnologias:** Python, Scapy, SQLite, Docker
 
@@ -25,7 +25,7 @@ docker compose run traffic-analyzer --demo
 
 Prompt estruturado para uso com IAs generativas (ChatGPT, Claude, Gemini) para analise de logs de infraestrutura de rede. Inclui exemplo de log e resposta esperada.
 
-📂 [`challenge-02-log-analysis/`](./challenge-02-log-analysis/)
+[`challenge-02-log-analysis/`](./challenge-02-log-analysis/)
 
 ---
 

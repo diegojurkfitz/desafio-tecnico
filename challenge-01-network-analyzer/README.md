@@ -16,7 +16,7 @@ Aplicacao em Python para capturar pacotes de uma interface de rede, armazenar os
 - Roda em Docker.
 - Possui modo demonstracao para validar a aplicacao sem permissao de captura.
 - Possui testes automatizados para estatisticas e persistencia.
-- Suporta interrupcao graceful (Ctrl+C) sem perda de dados.
+- Suporta interrupcao graceful (Ctrl+C) preservando os pacotes ja capturados.
 
 ### Arquitetura
 
@@ -154,10 +154,10 @@ Para captura real fora do Docker, execute com permissao de administrador/root e 
 
 A aplicacao suporta interrupcao via Ctrl+C durante a captura. Quando interrompida:
 1. A captura para imediatamente.
-2. Os pacotes ja capturados sao armazenados no banco.
-3. As estatisticas dos pacotes capturados ate o momento sao exibidas normalmente.
+2. Os pacotes ja retornados pela captura ate o momento sao armazenados no banco.
+3. As estatisticas dos pacotes capturados sao exibidas normalmente.
 
-Isso evita perda de dados em cenarios onde o usuario precisa interromper uma captura longa.
+Isso preserva o trabalho ja realizado em cenarios onde o usuario precisa interromper uma captura longa.
 
 ### Testes
 
@@ -181,7 +181,7 @@ Os testes cobrem:
 - **Top 5 por bytes** (volume de trafego) ao inves de contagem de pacotes, porque o enunciado pede "mais trafego" e volume em bytes e a metrica mais precisa.
 - **Insercao em batch** (lotes de 50) reduz I/O e melhora performance em capturas de alto volume.
 - **WAL mode** no SQLite melhora throughput de escritas.
-- **Graceful shutdown** com signal handler garante que pacotes capturados nunca sao perdidos.
+- **Graceful shutdown** com signal handler preserva os pacotes ja capturados em caso de interrupcao.
 - O modo `--demo` foi incluido para permitir validacao sem depender de permissao de captura.
 - A aplicacao ignora pacotes sem camada IP, pois os campos exigidos dependem de IP de origem e destino.
 - A coleta possui `--count` e `--timeout` para evitar execucoes infinitas e permitir controle operacional.
