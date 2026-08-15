@@ -106,7 +106,7 @@ Saida esperada:
 Resumo do trafego capturado
 =============================
 Total de pacotes: 7
-Total de bytes: 3.4 KB
+Total de bytes: 3.2 KB
 
 Pacotes por protocolo:
 - TCP: 4
@@ -115,16 +115,16 @@ Pacotes por protocolo:
 
 Top 5 IPs de origem (por volume de trafego):
 - 10.0.0.11: 2 pkts, 2.8 KB
-- 10.0.0.10: 3 pkts, 272 B
-- 10.0.0.13: 1 pkts, 66 B
-- 10.0.0.12: 1 pkts, 60 B
+- 10.0.0.10: 3 pkts, 280 B
+- 10.0.0.13: 1 pkt, 66 B
+- 10.0.0.12: 1 pkt, 60 B
 
 Top 5 IPs de destino (por volume de trafego):
 - 172.217.29.14: 2 pkts, 1.5 KB
 - 10.0.0.1: 2 pkts, 1.4 KB
-- 8.8.4.4: 1 pkts, 120 B
-- 1.1.1.1: 1 pkts, 84 B
-- 8.8.8.8: 1 pkts, 76 B
+- 8.8.4.4: 1 pkt, 120 B
+- 1.1.1.1: 1 pkt, 84 B
+- 8.8.8.8: 1 pkt, 76 B
 
 Pacotes armazenados no banco: 7
 Banco utilizado: /data/packets.db

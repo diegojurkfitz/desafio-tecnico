@@ -75,7 +75,7 @@ def _format_protocol(items: list[tuple[str, int]]) -> list[str]:
 def _format_top_ips(items: list[tuple[str, int, int]]) -> list[str]:
     if not items:
         return ["- nenhum pacote encontrado"]
-    return [f"- {ip}: {count} pkts, {_format_bytes(bytes_val)}" for ip, count, bytes_val in items]
+    return [f"- {ip}: {count} {'pkt' if count == 1 else 'pkts'}, {_format_bytes(bytes_val)}" for ip, count, bytes_val in items]
 
 
 def _format_bytes(value: int) -> str:
