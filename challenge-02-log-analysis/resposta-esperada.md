@@ -3,7 +3,7 @@
 - Ha dois problemas principais no trecho analisado:
   - Falha operacional afetando o endpoint /checkout, com timeouts de conexao com banco e respostas HTTP 502.
   - Atividade suspeita de seguranca contra SSH, com multiplas tentativas de login falhas a partir do mesmo IP externo e alerta de possivel SYN flood na porta 22.
-- O impacto provavel e indisponibilidade parcial ou intermitencia no fluxo de checkout, alem de risco de tentativa de acesso indevido ao servidor.
+- O impacto provavel e uma falha parcial no fluxo de checkout, com possibilidade de indisponibilidade do endpoint enquanto persistirem os timeouts do banco.
 
 ## Eventos relevantes encontrados
 
@@ -17,7 +17,7 @@
 
 ## Padroes e anomalias
 
-- O mesmo IP externo, 185.199.110.23, realizou varias tentativas de login SSH com usuarios comuns de ataque, como admin, test e root.
+- O mesmo IP externo, 185.199.110.23, realizou multiplas tentativas de autenticacao SSH utilizando diferentes nomes de usuario, incluindo contas administrativas, caracterizando comportamento suspeito.
 - O servico de aplicacao apresenta timeouts de banco em sequencia, seguido por falhas HTTP 502 no checkout.
 - Os tempos de resposta do /checkout ficaram proximos de 5 segundos, alinhados ao timeout de banco de 5000ms.
 - O alerta de SYN flood na porta 22 reforca a possibilidade de comportamento hostil contra o SSH.
@@ -28,7 +28,7 @@
   - Evidencia: mensagens repetidas de database connection timeout e falha db_timeout no processamento de pedido.
 - **Possivel:** checkpoint ou carga no PostgreSQL contribuindo para latencia.
   - Evidencia: log de checkpoint no db-prod-01 aparece no mesmo intervalo, mas sozinho nao comprova causa raiz.
-- **Provavel:** tentativa automatizada de brute force ou scanning contra SSH.
+- **Provavel:** multiplas tentativas de autenticacao SSH com diferentes usuarios a partir do mesmo IP externo, caracterizando comportamento suspeito compativel com brute force ou scanning.
   - Evidencia: multiplas falhas de senha, usuarios invalidos e mesmo IP de origem.
 - **Possivel:** ataque ou excesso de conexoes na porta 22.
   - Evidencia: alerta do kernel sobre possivel SYN flooding.

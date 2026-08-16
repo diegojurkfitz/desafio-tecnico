@@ -25,6 +25,8 @@ Criar um prompt reutilizavel para uma IA generativa (ChatGPT, Claude, Gemini) ca
 
 Para validacao, use o [`exemplo-log.txt`](./exemplo-log.txt) como entrada e compare com a [`resposta-esperada.md`](./resposta-esperada.md).
 
+`resposta-esperada.md` representa uma analise de referencia para o `exemplo-log.txt`. Ela deve ser utilizada para validar se a resposta gerada identifica os principais eventos, correlacoes, hipoteses e acoes esperadas. A validacao nao exige correspondencia textual exata, pois diferentes modelos podem expressar corretamente o mesmo diagnostico de maneiras diferentes.
+
 ## Sobre o exemplo de log
 
 O log de exemplo simula um cenario real de producao com dois problemas simultaneos:
@@ -56,9 +58,6 @@ Essas regras tornam o prompt seguro para uso em ambientes reais onde logs podem 
 
 ## Compatibilidade
 
-Testado com:
-- ChatGPT (GPT-4o)
-- Claude (Sonnet/Opus)
-- Gemini Pro
+O prompt foi concebido para modelos de linguagem generativos capazes de seguir instrucoes estruturadas e analisar texto tecnico.
 
-O formato de saida e consistente entre os modelos devido a estrutura clara do prompt.
+Diferencas entre modelos podem produzir variacoes de redacao, organizacao ou nivel de detalhamento sem necessariamente alterar o diagnostico tecnico, desde que as evidencias, hipoteses e acoes recomendadas permanecam coerentes com os logs fornecidos.
