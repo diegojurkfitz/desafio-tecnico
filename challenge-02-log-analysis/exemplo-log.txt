@@ -1,0 +1,14 @@
+2026-08-14T09:15:01Z app-prod-01 nginx[2210]: 200 GET /healthz 10.20.1.15 3ms
+2026-08-14T09:15:04Z app-prod-01 sshd[905]: Failed password for invalid user admin from 185.199.110.23 port 53422 ssh2
+2026-08-14T09:15:07Z app-prod-01 sshd[905]: Failed password for invalid user admin from 185.199.110.23 port 53424 ssh2
+2026-08-14T09:15:11Z app-prod-01 sshd[905]: Failed password for invalid user test from 185.199.110.23 port 53426 ssh2
+2026-08-14T09:16:02Z app-prod-01 app[4412]: ERROR database connection timeout after 5000ms
+2026-08-14T09:16:04Z app-prod-01 app[4412]: ERROR failed to process order_id=98431 reason=db_timeout
+2026-08-14T09:16:05Z app-prod-01 app[4412]: WARN retrying database connection attempt=1
+2026-08-14T09:16:08Z db-prod-01 postgres[1777]: LOG checkpoint starting: time
+2026-08-14T09:16:09Z app-prod-01 app[4412]: ERROR database connection timeout after 5000ms
+2026-08-14T09:16:14Z app-prod-01 nginx[2210]: 502 POST /checkout 10.20.1.44 5002ms
+2026-08-14T09:16:15Z app-prod-01 nginx[2210]: 502 POST /checkout 10.20.1.45 5001ms
+2026-08-14T09:17:01Z app-prod-01 sshd[905]: Failed password for root from 185.199.110.23 port 53430 ssh2
+2026-08-14T09:17:03Z app-prod-01 sshd[905]: Failed password for root from 185.199.110.23 port 53431 ssh2
+2026-08-14T09:17:05Z app-prod-01 kernel: possible SYN flooding on port 22. Sending cookies.
