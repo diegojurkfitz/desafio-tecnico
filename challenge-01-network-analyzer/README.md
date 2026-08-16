@@ -2,6 +2,13 @@
 
 Aplicacao em Python para capturar pacotes de uma interface de rede, armazenar os dados em SQLite e exibir estatisticas basicas do trafego.
 
+### Pre-requisitos
+
+- Docker 20+ e Docker Compose
+- Python 3.12+ (apenas para execucao local sem Docker)
+- Linux recomendado para captura real em container
+- Permissoes NET_RAW e NET_ADMIN para captura de pacotes
+
 ### O que a aplicacao entrega
 
 - Captura pacotes de uma interface informada pelo usuario.
@@ -64,6 +71,8 @@ Justificativa:
 - WAL mode (Write-Ahead Logging) melhora performance em escritas.
 - Insercao em batch (lotes de 50 pacotes) reduz overhead de I/O em grandes volumes.
 
+**Persistencia dos pacotes:** a aplicacao persiste os metadados relevantes de cada pacote capturado (timestamp, IP de origem, IP de destino, protocolo e tamanho). O payload bruto nao e armazenado, pois nao e necessario para atender aos requisitos analiticos do desafio e aumentaria significativamente o volume e a sensibilidade dos dados armazenados.
+
 ### Como executar com Docker
 
 #### 1. Build
@@ -92,7 +101,9 @@ Exemplo com Docker Compose:
 docker compose up --build
 ```
 
-Observacao: captura de pacotes exige permissao elevada. Por isso o container usa as capabilities `NET_ADMIN` e `NET_RAW`. Em Windows/macOS, a captura dentro de container pode variar conforme a virtualizacao de rede do Docker Desktop. Para demonstracao, use o modo `--demo`.
+O `docker-compose.yml` fornece uma forma simplificada de executar a aplicacao com as permissoes e volumes ja configurados. Para captura real, o acesso a interface de rede depende do sistema operacional e do ambiente Docker utilizado. Em ambientes onde a captura nao e possivel, use `--demo`.
+
+Observacao: captura de pacotes exige permissao elevada. Por isso o container usa as capabilities `NET_ADMIN` e `NET_RAW`. Em Windows/macOS, a captura dentro de container pode variar conforme a virtualizacao de rede do Docker Desktop.
 
 #### 3. Modo demonstracao
 
@@ -178,12 +189,12 @@ Os testes cobrem:
 - **Python** foi escolhido por ser objetivo para automacao, infraestrutura e troubleshooting.
 - **Scapy** foi usado porque fornece captura e parsing de pacotes de forma direta.
 - **SQLite** foi usado para manter a solucao portavel e facil de executar.
-- **Top 5 por bytes** (volume de trafego) ao inves de contagem de pacotes, porque o enunciado pede "mais trafego" e volume em bytes e a metrica mais precisa.
+- **Top 5 por bytes** (volume de trafego) ao inves de contagem de pacotes. "Mais trafego" foi interpretado como volume de dados transferidos, portanto o ranking considera a soma de `packet_size` em bytes, e nao apenas a quantidade de pacotes.
 - **Insercao em batch** (lotes de 50) reduz I/O e melhora performance em capturas de alto volume.
 - **WAL mode** no SQLite melhora throughput de escritas.
 - **Graceful shutdown** com signal handler preserva os pacotes ja capturados em caso de interrupcao.
-- **Logging estruturado** com modulo `logging` em vez de prints, facilitando integracao com ferramentas de observabilidade.
-- **CI/CD** com GitHub Actions executando testes automaticamente a cada push.
+- **Logging** com modulo `logging` em vez de prints, facilitando integracao com ferramentas de observabilidade.
+- **CI** com GitHub Actions executando testes automaticamente a cada push.
 - O modo `--demo` foi incluido para permitir validacao sem depender de permissao de captura.
 - A aplicacao ignora pacotes sem camada IP, pois os campos exigidos dependem de IP de origem e destino.
 - A coleta possui `--count` e `--timeout` para evitar execucoes infinitas e permitir controle operacional.
@@ -202,7 +213,7 @@ make lint      # Verifica tipagem com mypy
 make clean     # Remove cache e banco local
 ```
 
-### CI/CD
+### Integracao Continua (CI)
 
 O projeto possui pipeline de integracao continua via GitHub Actions (`.github/workflows/ci.yml`) que executa automaticamente:
 - Instalacao de dependencias
